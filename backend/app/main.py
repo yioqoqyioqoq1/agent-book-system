@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import asyncio
 
 from app.api import api
 from app.config import UPLOAD_DIR
@@ -10,6 +12,7 @@ from app.models.user import User
 from app.models.lab import Lab
 from app.models.equipment import Equipment
 from app.models.reservation import Reservation
+from app.services import reservation_service
 from app.common.exceptions import (
     BusinessException,
     bussiness_excpetion_hadler,
@@ -20,7 +23,16 @@ from app.common.exceptions import (
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 启动项目开启异步的扫描任务
+    task = asyncio.create_task(reservation_service.run_expire_scan())
+    yield
+    task.cancel()  # 关闭项目同时取消异步任务
+
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:5173",

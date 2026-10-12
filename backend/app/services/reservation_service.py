@@ -1,9 +1,11 @@
 from datetime import datetime
+import asyncio
 
 from sqlalchemy.orm import Session
 
 from app.common.exceptions import BusinessException
 from app.common.response import PageResponse
+from app.database import SessionLocal
 from app.models.equipment import Equipment
 from app.models.lab import Lab
 from app.models.reservation import Reservation
@@ -129,3 +131,27 @@ def audit_reservation(db: Session, reservation_id: int, status: int):
         raise BusinessException(message="当前状态不支持审核")
     item.status = status
     db.commit()
+
+
+def expire_pending_reservations():
+    db = SessionLocal()
+    try:
+        now = datetime.now()
+        today = now.strftime("%Y-%m-%d")
+        now_time = now.strftime("%H:%M")
+        items = db.query(Reservation).filter(Reservation.status == 0).all()
+        changed = False
+        for item in items:
+            if item.date < today or (item.date == today and item.end_time <= now_time):
+                item.status = 3
+                changed = True
+        if changed:
+            db.commit()
+    finally:
+        db.close()
+
+
+async def run_expire_scan():
+    while True:
+        expire_pending_reservations()
+        await asyncio.sleep(60)
