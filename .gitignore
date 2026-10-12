@@ -1,0 +1,27 @@
+# Node
+node_modules/
+frontend/dist/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+backend/.venv/
+
+# Env & secrets
+.env
+backend/.env
+
+# Uploads
+backend/uploads/
+backend/upload/
+
+# Vector DB / chroma
+backend/data/chroma/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
