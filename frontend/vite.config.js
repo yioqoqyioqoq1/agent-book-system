@@ -10,6 +10,13 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5173
+    port: 5173,
+    // 开发代理，前端跨域配置
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000', // 后端地址
+        changeOrigin: true // 修改源，核心
+      }
+    }
   }
 })

@@ -8,8 +8,7 @@ __pycache__/
 .venv/
 backend/.venv/
 
-# Env & secrets
-.env
+# Env & secrets (后端密钥不入库)
 backend/.env
 
 # Uploads
