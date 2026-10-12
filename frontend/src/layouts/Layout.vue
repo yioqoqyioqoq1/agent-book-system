@@ -15,7 +15,7 @@
           <img style="width: 40px" src="@/assets/imgs/logo.png" alt="" />
           <div style="margin-left: 5px">智能实验室预约系统</div>
         </div>
-        <el-dropdown>
+        <el-dropdown @command="handleCommand">
           <div style="display: flex; align-items: center; cursor: pointer">
             <img
               :src="userInfo?.avatar || logo"
@@ -24,6 +24,13 @@
             />
             <div style="margin-left: 3px">{{ userInfo?.name }}</div>
           </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="profile">个人信息</el-dropdown-item>
+              <el-dropdown-item command="password">修改密码</el-dropdown-item>
+              <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
         </el-dropdown>
       </el-header>
       <el-container>
@@ -58,7 +65,20 @@
 <script setup>
 import { Menu as IconMenu, House, Setting, User } from '@element-plus/icons-vue'
 import { useUser } from '@/utils/user'
+import { logout } from '@/utils/auth'
+import router from '@/router'
 import logo from '@/assets/imgs/logo.png'
 
 const { userInfo } = useUser()
+
+const handleCommand = (command) => {
+  if (command === 'profile') {
+    router.push('/manager/profile')
+  } else if (command === 'password') {
+    router.push('/manager/password')
+  } else if (command === 'logout') {
+    logout()
+    router.push('/login')
+  }
+}
 </script>
