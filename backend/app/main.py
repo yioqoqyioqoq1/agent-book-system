@@ -9,6 +9,7 @@ from app.database import Base, engine
 from app.models.user import User
 from app.models.lab import Lab
 from app.models.equipment import Equipment
+from app.models.reservation import Reservation
 from app.common.exceptions import (
     BusinessException,
     bussiness_excpetion_hadler,
