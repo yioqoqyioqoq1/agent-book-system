@@ -8,6 +8,7 @@ from app.config import UPLOAD_DIR
 from app.database import Base, engine
 from app.models.user import User
 from app.models.lab import Lab
+from app.models.equipment import Equipment
 from app.common.exceptions import (
     BusinessException,
     bussiness_excpetion_hadler,
