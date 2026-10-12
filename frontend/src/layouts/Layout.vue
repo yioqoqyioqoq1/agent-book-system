@@ -64,6 +64,10 @@
               <el-icon><DocumentChecked /></el-icon>
               预约审核
             </el-menu-item>
+            <el-menu-item index="/manager/ai-chat">
+              <el-icon><ChatDotRound /></el-icon>
+              AI智能助手
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main>
@@ -82,7 +86,8 @@ import {
   User,
   OfficeBuilding,
   Tickets,
-  DocumentChecked
+  DocumentChecked,
+  ChatDotRound
 } from '@element-plus/icons-vue'
 import { useUser } from '@/utils/user'
 import { logout } from '@/utils/auth'
