@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import asyncio
+import logging
 
 from app.api import api
 from app.config import UPLOAD_DIR
@@ -12,7 +13,9 @@ from app.models.user import User
 from app.models.lab import Lab
 from app.models.equipment import Equipment
 from app.models.reservation import Reservation
-from app.services import reservation_service
+from app.services import reservation_service, kb_service
+
+logger = logging.getLogger(__name__)
 from app.common.exceptions import (
     BusinessException,
     bussiness_excpetion_hadler,
@@ -26,6 +29,11 @@ Base.metadata.create_all(bind=engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # 预热向量库：模型加载（约 15s）挪到启动阶段，避免首个请求超过前端 30s 超时
+    try:
+        await asyncio.to_thread(kb_service.warmup)  # to_thread：别阻塞事件循环
+    except Exception:
+        logger.exception("向量库预热失败，服务继续启动")
     # 启动项目开启异步的扫描任务
     task = asyncio.create_task(reservation_service.run_expire_scan())
     yield
